@@ -8,7 +8,7 @@ const productRouter = express.Router();
 //1 
 productRouter.post("/", async (req, res, next) => {
   try {
-   const product = await Products.create(req.body)
+   const product = await ProductModel.create(req.body)
     res.status(201).send(product);
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -18,7 +18,7 @@ productRouter.post("/", async (req, res, next) => {
 //2.
 productRouter.get("/", async (req, res, next) => {
   try {
-    const product = await Products.findAll({
+    const product = await ProductModel.findAll({
   include: [Review, Categories, Users]
     
     });
@@ -31,7 +31,7 @@ productRouter.get("/", async (req, res, next) => {
 // //3 
 productRouter.get("/:id", async (req, res, next) => {
   try {
-    const product = await Products.findByPk(req.params.id);
+    const product = await ProductModel.findByPk(req.params.id);
 if (product) {
   res.send(product)
   } else {
@@ -47,7 +47,7 @@ if (product) {
  
 productRouter.put("/:id", async (req, res, next) => {
   try {
-     const updateUser = await Products.update(req.body, {
+     const updateUser = await ProductModel.update(req.body, {
         where: { id: req.params.id },
         returning: true,
       });
@@ -63,7 +63,7 @@ productRouter.put("/:id", async (req, res, next) => {
 
 productRouter.delete("/:id", async (req, res, next) => {
   try {
-   const result = await Products.destroy({
+   const result = await ProductModel.destroy({
         where: {
           id: req.params.id,
         },
