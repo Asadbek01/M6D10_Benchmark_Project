@@ -7,33 +7,31 @@ const reviewRouter = express.Router();
 //1 
 reviewRouter.post("/", async (req, res, next) => {
   try {
-   const review = await ReviewModel.create(req.body)
-    res.status(201).send(review);
+   const newReview = await ReviewModel(req.body)
+   const {_id} = await newReview.save()
+    res.status(201).send({ _id});
   } catch (error) {
-    res.status(500).send({ message: error.message });
+   next({ message: error.message });
   }
 });
 
 //2.
 reviewRouter.get("/", async (req, res, next) => {
   try {
-    const review = await ReviewModel.findAll({
-    });
+    const review = await ReviewModel.find()
     res.send(review);
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    next({ message: error.message });
   }
 });
  
 // //3 
-reviewRouter.get("/:id", async (req, res, next) => {
+reviewRouter.get("/:reviewId", async (req, res, next) => {
   try {
-    const review = await ReviewModel.findByPk(req.params.id);
-if (review) {
-  res.send(review)
-  } else {
-        res.status(404).send("Not found");
-      }
+    if(req.params.reviewId.length !== 24) return next(createHttpError(404, "Wrong Id number"))
+    const review = await ReviewModel.findById(req.params.reviewId);
+    if(!review) return next(createHttpError(404, `The review id with ${req.params.reviewId} is could not find`))
+      res.send(review)
     } catch (e) {
       console.log(e);
       next(e);
@@ -42,14 +40,11 @@ if (review) {
 
 // //4.
  
-reviewRouter.put("/:id", async (req, res, next) => {
+reviewRouter.put("/:reviewId", async (req, res, next) => {
   try {
-     const updateReview = await ReviewModel.update(req.body, {
-        where: { id: req.params.id },
-        returning: true,
-      });
-
-      res.send(updateReview[1][0]);
+     const updateReview = await ReviewModel.findByIdAndUpdate(req.params.reviewId, req.body, {new: true})
+      if (!updateReview) return next(createHttpError(404, `The review id with ${req.params.reviewId} is could not find`))
+      res.send(updateReview)
     } catch (e) {
       console.log(e);
       next(e);
@@ -58,19 +53,11 @@ reviewRouter.put("/:id", async (req, res, next) => {
  
 //5.
 
-reviewRouter.delete("/:id", async (req, res, next) => {
+reviewRouter.delete("/:reviewId", async (req, res, next) => {
   try {
-   const result = await ReviewModel.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
-
-      if (result > 0) {
-        res.send("ok");
-      } else {
-        res.status(404).send("not found");
-      }
+   const result = await ReviewModel.findByIdAndDelete(req.params.reviewId) 
+    if(!result) return next(createHttpError(404,`The review id with ${req.params.reviewId} is could not find`))
+    res.send(result)
     } catch (e) {
       console.log(e);
       next(e);
