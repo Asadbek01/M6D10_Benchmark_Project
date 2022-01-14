@@ -7,6 +7,7 @@ const productSchema = new Schema(
     product_description: { type: String, required: true },
     product_brand: { type: String, required: true },
     product_price: { type: Number, required: true },
+    category: {type: String, required: true},
     reviews:[
       {
         text: {type: String, required: true},

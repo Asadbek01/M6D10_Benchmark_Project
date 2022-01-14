@@ -21,8 +21,14 @@ productRouter.post("/", async (req, res, next) => {
 //2.
 productRouter.get("/", async (req, res, next) => {
   try {
-    const products = await ProductsModel.find();
-    res.send(products);
+    const selectQuery = q2m(req.query)
+    const total = await ProductsModel.countDocuments(selectQuery.criteria) 
+    const products= await ProductsModel.find(selectQuery.criteria)
+            .sort(selectQuery.options.sort)
+            .skip(selectQuery.options.skip || 0)
+            .limit(selectQuery.options.limit)
+            res.send({links:selectQuery.links("/products", total), pageTotal: Math.ceil(total / selectQuery.options.limit), total, products})
+    
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
@@ -89,8 +95,10 @@ productRouter.delete("/:productId", async (req, res, next) => {
 
 productRouter.post("/:productId/reviews" , async(req, res, next) =>{
   try {
-    const productId = await ProductsModel.findById(req.params.productId)
+    const productId = await ProductsModel.findById(req.params.productId,{_id:0}
+      )
     if(productId) {
+
       const postReview = { ...productId.toObject(),  rate:req.body.rate, text:req.body.text} 
       const modifyProduct = await ProductsModel.findByIdAndUpdate(req.params.productId, {$push:{reviews:postReview}}, {new:true})
      
@@ -129,20 +137,31 @@ try {
 }
 })
 
-productRouter.put("/:productId/reviews/reviewsId", async(req,res,next)=>{
+productRouter.put("/:productId/reviews/:reviewsId", async(req,res,next)=>{
   try {
-    
-  } catch (error) {
-    
-  }
-  })
-
-  productRouter.delete("/:productId/reviews/reviewsId", async(req,res,next)=>{
+    const productId = await ProductsModel.findById(req.params.productId)
+   const postedReview = productId.reviews.findIndex(review => review._id.toString() === req.params.reviewsId)
+   productId.reviews[postedReview] = {...productId.reviews[postedReview].toObject(), ...req.body}
+   await productId.save()
+  res.send(productId)
+  
+  
+} catch (error) { 
+  next(error.message)
+}
+})
+  productRouter.delete("/:productId/reviews/:reviewsId", async(req,res,next)=>{
     try {
-      
-    } catch (error) {
-      
+      const product = await ProductsModel.findByIdAndUpdate(req.params.productId, { $pull: { reviews: { _id: req.params.reviewsId } } }, { new: true }) 
+    if(product){
+     res.send()
+    
+    }else{
+      console.log("error")
     }
-    })
+    } catch (error) {
+      console.log(error)
+    }
+  })
 
 export default productRouter;
