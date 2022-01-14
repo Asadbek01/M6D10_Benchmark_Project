@@ -85,4 +85,64 @@ productRouter.delete("/:productId", async (req, res, next) => {
   }
 });
 
+                            // **************reviews*************
+
+productRouter.post("/:productId/reviews" , async(req, res, next) =>{
+  try {
+    const productId = await ProductsModel.findById(req.params.productId)
+    if(productId) {
+      const postReview = { ...productId.toObject(),  rate:req.body.rate, text:req.body.text} 
+      const modifyProduct = await ProductsModel.findByIdAndUpdate(req.params.productId, {$push:{reviews:postReview}}, {new:true})
+     
+      if(modifyProduct){
+          res.send(modifyProduct)
+      }
+    }
+  } catch (error) {
+    
+  }
+})
+ 
+productRouter.get("/:productId/reviews", async(req, res, next)=>{
+  try {
+    const productId = await ProductsModel.findById(req.params.productId)
+    if(productId) {
+      res.send(productId.reviews)
+    }
+  } catch (error) {
+    
+  }
+})
+productRouter.get("/:productId/reviews/:reviewsId", async(req,res,next)=>{
+try {
+  const productId = await ProductsModel.findById(req.params.productId)
+  if(productId) {
+   const postedReview = productId.reviews.find(review => review._id.toString() === req.params.reviewsId)
+   if(postedReview){
+     res.send(postedReview)
+   }
+  }
+
+  
+} catch (error) {
+  
+}
+})
+
+productRouter.put("/:productId/reviews/reviewsId", async(req,res,next)=>{
+  try {
+    
+  } catch (error) {
+    
+  }
+  })
+
+  productRouter.delete("/:productId/reviews/reviewsId", async(req,res,next)=>{
+    try {
+      
+    } catch (error) {
+      
+    }
+    })
+
 export default productRouter;
