@@ -1,12 +1,13 @@
-import { Router } from "express";
-import {Review, Products} from "../../utils/db/models/relation.js";
-import moment from 'moment'
+import express from "express";
+import createHttpError from "http-errors";
+import q2m from "query-to-mongo";
+import ReviewModel from "../../utils/db/Schema/reviews.js"
 
-const reviewRouter = Router();
+const reviewRouter = express.Router();
 //1 
 reviewRouter.post("/", async (req, res, next) => {
   try {
-   const review = await Review.create(req.body)
+   const review = await ReviewModel.create(req.body)
     res.status(201).send(review);
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -16,7 +17,7 @@ reviewRouter.post("/", async (req, res, next) => {
 //2.
 reviewRouter.get("/", async (req, res, next) => {
   try {
-    const review = await Review.findAll({
+    const review = await ReviewModel.findAll({
     });
     res.send(review);
   } catch (error) {
@@ -27,7 +28,7 @@ reviewRouter.get("/", async (req, res, next) => {
 // //3 
 reviewRouter.get("/:id", async (req, res, next) => {
   try {
-    const review = await Review.findByPk(req.params.id);
+    const review = await ReviewModel.findByPk(req.params.id);
 if (review) {
   res.send(review)
   } else {
@@ -43,7 +44,7 @@ if (review) {
  
 reviewRouter.put("/:id", async (req, res, next) => {
   try {
-     const updateReview = await Review.update(req.body, {
+     const updateReview = await ReviewModel.update(req.body, {
         where: { id: req.params.id },
         returning: true,
       });
@@ -59,7 +60,7 @@ reviewRouter.put("/:id", async (req, res, next) => {
 
 reviewRouter.delete("/:id", async (req, res, next) => {
   try {
-   const result = await Review.destroy({
+   const result = await ReviewModel.destroy({
         where: {
           id: req.params.id,
         },

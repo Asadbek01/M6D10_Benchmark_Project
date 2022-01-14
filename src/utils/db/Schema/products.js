@@ -1,31 +1,12 @@
 import mongoose from mongoose
-const Products = sequelize.define(
-  "product",
-  {
-    id: {
-      primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    product_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    product_description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    product_brand: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    product_price: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-   
-  }
 
-);
+const {Schema, model} = mongoose
+const ProductSchema = new Schema({
 
-export default Products;
+    product_name: {type: String, required: true},
+    product_description: {type: String, required: true},
+    product_brand: {type: String, required: true},
+    product_price: {type: Number, required: true},
+    
+})
+export default model("Product", ProductSchema);

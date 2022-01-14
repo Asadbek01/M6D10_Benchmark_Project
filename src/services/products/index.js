@@ -1,8 +1,10 @@
-import { Router } from "express";
-import {Products, Review, Categories, Users, productCategory} from "../../utils/db/models/relation.js";
-import Sequelize from "sequelize"
+import express from "express";
+import createHttpError from "http-errors";
+import q2m from "query-to-mongo";
+import ProductModel from "../../utils/db/Schema/products.js"
 
-const productRouter = Router();
+
+const productRouter = express.Router();
 //1 
 productRouter.post("/", async (req, res, next) => {
   try {
