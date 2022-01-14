@@ -1,7 +1,7 @@
 import express from "express";
 import createHttpError from "http-errors";
 import q2m from "query-to-mongo";
-import ReviewModel from "../../utils/db/Schema/reviews.js"
+import ReviewModel from "../../Schema/reviews.js"
 
 const reviewRouter = express.Router();
 //1 

@@ -1,15 +1,15 @@
 import express from "express";
 import createHttpError from "http-errors";
 import q2m from "query-to-mongo";
-import ProductModel from "../../utils/db/Schema/products.js"
+// import ProductModel from "../../Schema/products.js"
 
 
 const productRouter = express.Router();
 //1 
 productRouter.post("/", async (req, res, next) => {
   try {
-   const product = await ProductModel.create(req.body)
-    res.status(201).send(product);
+  //  const product = await ProductModel.create(req.body)
+  //   res.status(201).send(product);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }

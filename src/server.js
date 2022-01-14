@@ -3,8 +3,9 @@ import cors from 'cors'
 import dotenv from "dotenv"
 import listEndpoints from "express-list-endpoints"
 dotenv.config()
-import productRouter from './services/products/index.js'
-import reviewRouter from './services/reviews/reviews.js'
+import productRouter from './services/models/products/index.js'
+import reviewRouter from './services/models/reviews/reviews.js'
+import mongoose from 'mongoose'
 // import CartRouter from "./services/shoppingCart/cart.js"
 
 
@@ -18,7 +19,7 @@ import reviewRouter from './services/reviews/reviews.js'
 //  server.use("/cart", CartRouter)
 
 mongoose.connect(process.env.MONGO_CONNECTION)
-
+const port = process.env.PORT
 mongoose.connection.on("connected", () => {
   console.log("Connected to Mongo!")
 
